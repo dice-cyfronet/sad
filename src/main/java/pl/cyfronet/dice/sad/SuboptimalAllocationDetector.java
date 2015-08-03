@@ -2,7 +2,8 @@ package pl.cyfronet.dice.sad;
 
 import com.espertech.esper.client.UpdateListener;
 import pl.cyfronet.dice.sad.cep.Engine;
-import pl.cyfronet.dice.sad.cep.GenericComplexEventListener;
+import pl.cyfronet.dice.sad.cep.EventDefinitionManager;
+import pl.cyfronet.dice.sad.cep.RedisComplexEventSink;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -13,23 +14,44 @@ import java.util.Map;
  */
 public class SuboptimalAllocationDetector {
 
+    private UpdateListener complexEvListener;
+    private Engine engine;
+    private EventDefinitionManager evDefMng;
 
-    public static void main(String[] args) throws InterruptedException, URISyntaxException {
-        System.out.println("Starting Suboptimal Allocation Detector");
-        testLoadEvent();
+    public SuboptimalAllocationDetector() {
+        try {
+            engine = new Engine();
+            evDefMng = new EventDefinitionManager(engine);
+            complexEvListener = new RedisComplexEventSink();
+        } catch (SADException e) {
+            System.out.println(
+                    "Failed to start Suboptimal Allocation Detector:\n\t"
+                    + e.getMessage()
+            );
+        }
 
     }
 
-    private static void testLoadEvent() throws InterruptedException, URISyntaxException {
+    public static void main(String[] args) throws InterruptedException, URISyntaxException {
+        System.out.println("Starting Suboptimal Allocation Detector");
+        new SuboptimalAllocationDetector().start();
+    }
+
+    private void start() {
+        evDefMng.start();
+
+    }
+
+    private static void testLoadEvent() throws InterruptedException, URISyntaxException, SADException {
         Engine engine = new Engine();
         Map<String, Object> eventDef = new HashMap<String, Object>();
         eventDef.put("vmUuid", String.class);
         eventDef.put("cpuLoad", float.class);
         engine.addEventType("CpuLoad1", eventDef);
-        UpdateListener listener = new GenericComplexEventListener(Configurator.INSTANCE.getProperty("redisUri"));
+        UpdateListener listener = new RedisComplexEventSink();
         String complexEvDef = "select avg(cpuLoad), vmUuid from CpuLoad1.win:time(5 sec) having avg(cpuLoad) > 0.8 output first every 10 seconds";
         engine.subscribe(complexEvDef, listener);
-        Map eventMap = null;
+        Map eventMap;
         for(int i=0; i < 20; i++) {
             eventMap = new HashMap();
             eventMap.put("cpuLoad", i * 0.2);
@@ -42,10 +64,6 @@ public class SuboptimalAllocationDetector {
         engine.unsubscribe(complexEvDef);
         engine.removeEventType("CpuLoad1");
         System.out.println("Finished!");
-
-    }
-
-    class SimpleEventReceiver {
 
     }
 
