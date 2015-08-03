@@ -2,6 +2,8 @@ package pl.cyfronet.dice.sad.cep;
 
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
+import pl.cyfronet.dice.sad.Configurator;
+import pl.cyfronet.dice.sad.SADException;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisShardInfo;
 
@@ -15,8 +17,18 @@ public class RedisComplexEventSink implements UpdateListener {
 
     private Jedis jedis;
 
-    public RedisComplexEventSink(String redisURI) throws URISyntaxException {
-        URI uri = new URI(redisURI);
+    public RedisComplexEventSink() throws SADException {
+        Configurator configurator = Configurator.INSTANCE;
+        String redisURI = configurator.getProperty("redisURI");
+        URI uri;
+        try {
+            uri = new URI(redisURI);
+        } catch (URISyntaxException e) {
+            String exMsg = "Failed to create RedisComplexEventSink"
+                    + " due to invalid Redis URI ("
+                    + redisURI + "). Make sure it is defined in props file.";
+            throw new SADException(exMsg, e);
+        }
         JedisShardInfo info = new JedisShardInfo(uri);
         info.setTimeout(30000);
         jedis = new Jedis(info);
