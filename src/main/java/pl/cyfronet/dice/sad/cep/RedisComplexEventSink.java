@@ -11,11 +11,11 @@ import java.net.URISyntaxException;
 /**
 * Created by tomek on 04.02.15.
 */
-public class GenericComplexEventListener implements UpdateListener {
+public class RedisComplexEventSink implements UpdateListener {
 
-    Jedis jedis;
+    private Jedis jedis;
 
-    public GenericComplexEventListener(String redisURI) throws URISyntaxException {
+    public RedisComplexEventSink(String redisURI) throws URISyntaxException {
         URI uri = new URI(redisURI);
         JedisShardInfo info = new JedisShardInfo(uri);
         info.setTimeout(30000);
@@ -28,6 +28,8 @@ public class GenericComplexEventListener implements UpdateListener {
         for (String propName : newEvents[0].getEventType().getPropertyNames()) {
             eventStrBuff.append(propName).append(": ").append(newEvents[0].get(propName)).append("\n");
         }
-        jedis.publish("AtmosphereComplexEvent", eventStrBuff.append("}").toString());
+        String msg = eventStrBuff.append("}").toString();
+        System.out.println("Complex event: " + msg);
+        jedis.publish("AtmosphereComplexEvent", msg);
     }
 }
