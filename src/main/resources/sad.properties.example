@@ -1,1 +1,2 @@
-redisUri = REDIS_URI
+redisURI = REDIS_URI
+eventDefinitionChannel = CHANNEL_FOR_MESSAGES_DEFINING_EVENTS
