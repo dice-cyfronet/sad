@@ -14,6 +14,7 @@ import redis.clients.jedis.JedisPubSub;
 
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -66,13 +67,41 @@ public class EventDefinitionsSub extends JedisPubSub {
         Map<String, Object> evDefs = null;
         try {
             evDefs = decodeMsgToEventDefs(message);
+            Map<String, Object> simpleEvDef = (Map<String, Object>) evDefs.get("simple_event");
+            registerSimpleEvent(simpleEvDef);
+            String eplStatementString = (String) evDefs.get("complex_event");
+            registerComplexEventListener(eplStatementString);
         } catch (SADException e) {
-            e.printStackTrace();
+            log.warn(e.getMessage());
         }
         if (evDefs == null) { return; }
         for (Map.Entry<String, Object> e : evDefs.entrySet()) {
             log.info("Key " + e.getKey() + ", value " + e.getValue());
         }
+    }
+
+    private void registerComplexEventListener(String eplStatementString) throws SADException {
+        engine.subscribe(eplStatementString, RedisComplexEventSink.getInstance());
+    }
+
+    private void registerSimpleEvent(Map<String, Object> simpleEvDef) throws SADException {
+        String simpleEventName = (String) simpleEvDef.get("name");
+        Map<String, String> simpleEvProps = (Map<String, String>) simpleEvDef.get("properties");
+        Map<String, Object> eventProps = new HashMap<>();
+        for(Map.Entry<String, String> e : simpleEvProps.entrySet()) {
+            try {
+                eventProps.put(e.getKey(), Class.forName(e.getValue()));
+            } catch (ClassNotFoundException cnfe) {
+                throw new SADException(
+                        String.format(
+                                "Error while creating simple event definition. Class %s of property %s was not found",
+                                e.getValue(),
+                                e.getKey()
+                        )
+                );
+            }
+        }
+        engine.addEventType(simpleEventName, eventProps);
     }
 
     private Map<String, Object> decodeMsgToEventDefs(String msg) throws SADException {
