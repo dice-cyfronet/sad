@@ -2,7 +2,7 @@ package pl.cyfronet.dice.sad;
 
 import com.espertech.esper.client.UpdateListener;
 import pl.cyfronet.dice.sad.cep.Engine;
-import pl.cyfronet.dice.sad.cep.EventDefinitionManager;
+import pl.cyfronet.dice.sad.cep.EventDefinitionsManager;
 import pl.cyfronet.dice.sad.cep.RedisComplexEventSink;
 
 import java.net.URISyntaxException;
@@ -16,12 +16,12 @@ public class SuboptimalAllocationDetector {
 
     private UpdateListener complexEvListener;
     private Engine engine;
-    private EventDefinitionManager evDefMng;
+    private EventDefinitionsManager evDefMng;
 
     public SuboptimalAllocationDetector() {
         try {
             engine = new Engine();
-            evDefMng = new EventDefinitionManager(engine);
+            evDefMng = new EventDefinitionsManager(engine);
             complexEvListener = new RedisComplexEventSink();
         } catch (SADException e) {
             System.out.println(

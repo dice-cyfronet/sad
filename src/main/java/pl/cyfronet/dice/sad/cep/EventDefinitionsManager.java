@@ -12,13 +12,13 @@ import java.net.URISyntaxException;
 /**
  * Created by tomek on 8/3/15.
  */
-public class EventDefinitionManager {
+public class EventDefinitionsManager {
     private Engine engine;
     private Jedis jedis;
     private String evDefChannel;
     private JedisPubSub evDefSub;
 
-    public EventDefinitionManager(Engine engine) throws SADException {
+    public EventDefinitionsManager(Engine engine) throws SADException {
         this.engine = engine;
         Configurator configurator = Configurator.INSTANCE;
         String redisURI = configurator.getProperty("redisURI");
@@ -26,7 +26,7 @@ public class EventDefinitionManager {
         try {
             uri = new URI(redisURI);
         } catch (URISyntaxException e) {
-            String exMsg = "Failed to create EventDefinitionManager"
+            String exMsg = "Failed to create EventDefinitionsManager"
                     + " due to invalid Redis URI ("
                     + redisURI + "). Make sure redisURI is defined in props file";
             throw new SADException(exMsg, e);
@@ -35,7 +35,7 @@ public class EventDefinitionManager {
         info.setTimeout(30000);
         jedis = new Jedis(info);
         evDefChannel = configurator.getProperty("eventDefinitionChannel");
-        evDefSub = new EventDefinitionSub(engine);
+        evDefSub = new EventDefinitionsSub(engine);
     }
 
     public void start() {
