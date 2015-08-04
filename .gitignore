@@ -3,4 +3,5 @@
 /*.iml
 /src/main/resources/sad.properties
 logback.xml
+/logs
 
