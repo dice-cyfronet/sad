@@ -9,4 +9,6 @@ public class SADException extends Exception {
     public SADException(String exMsg, Throwable cause) {
         super(exMsg, cause);
     }
+
+    public SADException(String exMsg) { super(exMsg); }
 }
