@@ -28,7 +28,7 @@ public class SuboptimalAllocationDetector {
             evDefMng = new EventDefinitionsManager(engine);
             complexEvListener = new RedisComplexEventSink();
         } catch (SADException e) {
-            System.out.println(
+            log.error(
                     "Failed to start Suboptimal Allocation Detector:\n\t"
                     + e.getMessage()
             );
@@ -38,7 +38,7 @@ public class SuboptimalAllocationDetector {
 
     public static void main(String[] args) throws InterruptedException, URISyntaxException {
         log.info("Starting Suboptimal Allocation Detector");
-        new SuboptimalAllocationDetector().start();
+        //new SuboptimalAllocationDetector().start();
     }
 
     private void start() {
@@ -53,7 +53,8 @@ public class SuboptimalAllocationDetector {
         eventDef.put("cpuLoad", float.class);
         engine.addEventType("CpuLoad1", eventDef);
         UpdateListener listener = new RedisComplexEventSink();
-        String complexEvDef = "select avg(cpuLoad), vmUuid from CpuLoad1.win:time(5 sec) having avg(cpuLoad) > 0.8 output first every 10 seconds";
+        String complexEvDef = "select avg(cpuLoad), vmUuid from CpuLoad1.win:time(5 sec)"
+                            + " having avg(cpuLoad) > 0.8 output first every 10 seconds";
         engine.subscribe(complexEvDef, listener);
         Map eventMap;
         for(int i=0; i < 20; i++) {
@@ -61,13 +62,13 @@ public class SuboptimalAllocationDetector {
             eventMap.put("cpuLoad", i * 0.2);
             eventMap.put("vmUuid", "1");
             engine.sendEvent(eventMap, "CpuLoad1");
-            System.out.println("Sent event for 1 " + i * 0.2);
-            System.out.println("--------------------");
+            log.info("Sent event for 1 " + i * 0.2);
+            log.info("--------------------");
             Thread.sleep(900);
         }
         engine.unsubscribe(complexEvDef);
         engine.removeEventType("CpuLoad1");
-        System.out.println("Finished!");
+        log.info("Finished!");
 
     }
 
