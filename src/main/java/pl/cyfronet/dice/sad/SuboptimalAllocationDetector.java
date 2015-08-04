@@ -1,6 +1,8 @@
 package pl.cyfronet.dice.sad;
 
 import com.espertech.esper.client.UpdateListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.cyfronet.dice.sad.cep.Engine;
 import pl.cyfronet.dice.sad.cep.EventDefinitionsManager;
 import pl.cyfronet.dice.sad.cep.RedisComplexEventSink;
@@ -13,6 +15,8 @@ import java.util.Map;
  * Created by tomek on 04.02.15.
  */
 public class SuboptimalAllocationDetector {
+
+    private static final Logger log = LoggerFactory.getLogger(SuboptimalAllocationDetector.class);
 
     private UpdateListener complexEvListener;
     private Engine engine;
@@ -33,7 +37,7 @@ public class SuboptimalAllocationDetector {
     }
 
     public static void main(String[] args) throws InterruptedException, URISyntaxException {
-        System.out.println("Starting Suboptimal Allocation Detector");
+        log.info("Starting Suboptimal Allocation Detector");
         new SuboptimalAllocationDetector().start();
     }
 
