@@ -2,6 +2,8 @@ package pl.cyfronet.dice.sad.cep;
 
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.UpdateListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.cyfronet.dice.sad.Configurator;
 import pl.cyfronet.dice.sad.SADException;
 import redis.clients.jedis.Jedis;
@@ -15,6 +17,7 @@ import java.net.URISyntaxException;
 */
 public class RedisComplexEventSink implements UpdateListener {
 
+    private static final Logger log = LoggerFactory.getLogger(RedisComplexEventSink.class);
     private Jedis jedis;
 
     public RedisComplexEventSink() throws SADException {
@@ -41,7 +44,7 @@ public class RedisComplexEventSink implements UpdateListener {
             eventStrBuff.append(propName).append(": ").append(newEvents[0].get(propName)).append("\n");
         }
         String msg = eventStrBuff.append("}").toString();
-        System.out.println("Complex event: " + msg);
+        log.info("Complex event: " + msg);
         jedis.publish("AtmosphereComplexEvent", msg);
     }
 }
