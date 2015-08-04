@@ -11,12 +11,12 @@ import java.util.Map;
 /**
  * Created by tomek on 8/3/15.
  */
-public class EventDefinitionSub extends JedisPubSub {
+public class EventDefinitionsSub extends JedisPubSub {
 
     private Engine engine;
     private JSONParser parser;
 
-    EventDefinitionSub(Engine engine) {
+    EventDefinitionsSub(Engine engine) {
         this.engine = engine;
         parser = new JSONParser();
     }
@@ -48,15 +48,20 @@ public class EventDefinitionSub extends JedisPubSub {
         //TODO parse event definition and add event type
         System.out.println("Message: " + message);
         Map<String, Object> evDef = decodeMsgToEvenetDef(message);
-        validateEventDefinition(evDef);
+        isEventDefinitionValid(evDef);
         if (evDef == null) { return; }
         for (Map.Entry<String, Object> e : evDef.entrySet()) {
             System.out.println("Key " + e.getKey() + ", value " + e.getValue());
         }
     }
 
-    private void validateEventDefinition(Map<String, Object> evDef) throws SADException {
+    private boolean isEventDefinitionValid(Map<String, Object> evDef) throws SADException {
         // TODO not empty, contains a valid simple event definition
+        if (evDef.isEmpty()) {
+            System.out.println("Provided event definition is empty");
+            return false;
+        }
+        return true;
     }
 
     private Map<String, Object> decodeMsgToEvenetDef(String msg) {
