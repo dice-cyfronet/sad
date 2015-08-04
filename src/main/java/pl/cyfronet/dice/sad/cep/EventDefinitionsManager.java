@@ -1,11 +1,13 @@
 package pl.cyfronet.dice.sad.cep;
 
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import pl.cyfronet.dice.sad.Configurator;
 import pl.cyfronet.dice.sad.SADException;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.JedisShardInfo;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -35,7 +37,11 @@ public class EventDefinitionsManager {
         info.setTimeout(30000);
         jedis = new Jedis(info);
         evDefChannel = configurator.getProperty("eventDefinitionChannel");
-        evDefSub = new EventDefinitionsSub(engine);
+        try {
+            evDefSub = new EventDefinitionsSub(engine);
+        } catch (IOException | ProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     public void start() {
