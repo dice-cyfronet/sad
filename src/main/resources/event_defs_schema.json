@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://jsonschema.net",
+  "type": "object",
+  "properties": {
+    "simple_event": {
+      "id": "http://jsonschema.net/simple_event",
+      "type": "object",
+      "properties": {
+        "name": {
+          "id": "http://jsonschema.net/simple_event/name",
+          "type": "string"
+        },
+        "properties": {
+          "id": "http://jsonschema.net/simple_event/properties",
+          "type": "object",
+          "properties": {
+            "vmUuid": {
+              "id": "http://jsonschema.net/simple_event/properties/vmUuid",
+              "type": "string"
+            },
+            "cpuLoad": {
+              "id": "http://jsonschema.net/simple_event/properties/cpuLoad",
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "name",
+        "properties"
+      ]
+    },
+    "complex_event": {
+      "id": "http://jsonschema.net/complex_event",
+      "type": "string"
+    }
+  },
+  "required": [
+    "simple_event",
+    "complex_event"
+  ]
+}
