@@ -26,7 +26,7 @@ public class SuboptimalAllocationDetector {
         try {
             engine = new Engine();
             evDefMng = new EventDefinitionsManager(engine);
-            complexEvListener = new RedisComplexEventSink();
+            complexEvListener = RedisComplexEventSink.getInstance();
         } catch (SADException e) {
             log.error(
                     "Failed to start Suboptimal Allocation Detector:\n\t"
@@ -52,7 +52,7 @@ public class SuboptimalAllocationDetector {
         eventDef.put("vmUuid", String.class);
         eventDef.put("cpuLoad", float.class);
         engine.addEventType("CpuLoad1", eventDef);
-        UpdateListener listener = new RedisComplexEventSink();
+        UpdateListener listener = RedisComplexEventSink.getInstance();
         String complexEvDef = "select avg(cpuLoad), vmUuid from CpuLoad1.win:time(5 sec)"
                             + " having avg(cpuLoad) > 0.8 output first every 10 seconds";
         engine.subscribe(complexEvDef, listener);
