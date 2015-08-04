@@ -47,17 +47,21 @@ public class EventDefinitionsSub extends JedisPubSub {
     public void onMessage(String channel, String message) {
         //TODO parse event definition and add event type
         System.out.println("Message: " + message);
-        Map<String, Object> evDef = decodeMsgToEvenetDef(message);
-        isEventDefinitionValid(evDef);
-        if (evDef == null) { return; }
-        for (Map.Entry<String, Object> e : evDef.entrySet()) {
+        Map<String, Object> evDefs = decodeMsgToEvenetDef(message);
+        try {
+            validateEventDefinitions(evDefs);
+        } catch (SADException e) {
+            e.printStackTrace();
+        }
+        if (evDefs == null) { return; }
+        for (Map.Entry<String, Object> e : evDefs.entrySet()) {
             System.out.println("Key " + e.getKey() + ", value " + e.getValue());
         }
     }
 
-    private boolean isEventDefinitionValid(Map<String, Object> evDef) throws SADException {
+    private boolean validateEventDefinitions(Map<String, Object> evDefs) throws SADException {
         // TODO not empty, contains a valid simple event definition
-        if (evDef.isEmpty()) {
+        if (evDefs.isEmpty()) {
             System.out.println("Provided event definition is empty");
             return false;
         }
