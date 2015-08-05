@@ -9,6 +9,7 @@ import java.util.Map;
 * Created by tomek on 04.02.15.
 */
 public class Engine {
+
     private EPServiceProvider epService;
     private EPRuntime epRuntime;
     private Map<String, Subscription> subscriptions;
@@ -16,7 +17,7 @@ public class Engine {
     public Engine() {
         epService = EPServiceProviderManager.getDefaultProvider();
         epRuntime = epService.getEPRuntime();
-        subscriptions = new HashMap<String, Subscription>();
+        subscriptions = new HashMap<>();
     }
 
     public void addEventType(String evName, Map<String, Object> evDef) {
