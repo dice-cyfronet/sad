@@ -22,6 +22,8 @@ import java.util.Map;
  */
 public class EventDefinitionsSub extends JedisPubSub {
 
+    private static volatile EventDefinitionsSub instance;
+
     private static final Logger log = LoggerFactory.getLogger(EventDefinitionsSub.class);
 
     private final Engine engine;
@@ -31,10 +33,34 @@ public class EventDefinitionsSub extends JedisPubSub {
     private final JsonSchema schema;
     private final ObjectMapper mapper;
 
-    EventDefinitionsSub(Engine engine) throws IOException, ProcessingException {
+    public static EventDefinitionsSub getInstance(Engine engine) throws SADException {
+        if (instance  == null) {
+            synchronized (EventDefinitionsSub.class) {
+                if (instance == null) {
+                    instance = new EventDefinitionsSub(engine);
+                }
+            }
+        }
+        return instance;
+    }
+
+    private EventDefinitionsSub(Engine engine) throws SADException {
         this.engine = engine;
-        msgSchema = JsonLoader.fromResource("/event_defs_schema.json");
-        schema = factory.getJsonSchema(msgSchema);
+        try {
+            msgSchema = JsonLoader.fromResource("/event_defs_schema.json");
+            schema = factory.getJsonSchema(msgSchema);
+        } catch (IOException e) {
+            throw new SADException(
+                    "Error creating EventDefinitionSub instance because event_defs_schema.json could not be loaded",
+                    e
+            );
+        } catch (ProcessingException pe) {
+            throw new SADException(
+                    "Error creating EventDefinitionsSub instance because event_defs_schema.json could not be processed",
+                    pe
+            );
+        }
+
         mapper = new ObjectMapper();
     }
 

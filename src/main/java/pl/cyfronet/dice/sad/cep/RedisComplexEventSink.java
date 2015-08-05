@@ -17,10 +17,17 @@ import java.net.URISyntaxException;
 */
 public class RedisComplexEventSink implements UpdateListener {
 
-    private static RedisComplexEventSink instance;
+    private static volatile RedisComplexEventSink instance;
 
     public static RedisComplexEventSink getInstance() throws SADException {
-        return (instance != null) ? instance : (instance = new RedisComplexEventSink());
+        if (instance  == null) {
+            synchronized (RedisComplexEventSink.class) {
+                if (instance == null) {
+                    instance = new RedisComplexEventSink();
+                }
+            }
+        }
+        return instance;
     }
 
     private static final Logger log = LoggerFactory.getLogger(RedisComplexEventSink.class);

@@ -37,11 +37,7 @@ public class EventDefinitionsManager {
         info.setTimeout(30000);
         jedis = new Jedis(info);
         evDefChannel = configurator.getProperty("eventDefinitionChannel");
-        try {
-            evDefSub = new EventDefinitionsSub(engine);
-        } catch (IOException | ProcessingException e) {
-            e.printStackTrace();
-        }
+        evDefSub = EventDefinitionsSub.getInstance(engine);
     }
 
     public void start() {
