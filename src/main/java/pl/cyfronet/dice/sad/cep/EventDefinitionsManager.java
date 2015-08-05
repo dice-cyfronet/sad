@@ -18,7 +18,9 @@ public class EventDefinitionsManager {
     private Engine engine;
     private Jedis jedis;
     private String evDefChannel;
+    private String simpleEventChannel;
     private JedisPubSub evDefSub;
+    private SimpleEventSub simpleEventSub;
 
     public EventDefinitionsManager(Engine engine) throws SADException {
         this.engine = engine;
@@ -38,10 +40,13 @@ public class EventDefinitionsManager {
         jedis = new Jedis(info);
         evDefChannel = configurator.getProperty("eventDefinitionChannel");
         evDefSub = EventDefinitionsSub.getInstance(engine);
+        simpleEventChannel = configurator.getProperty("simpleEventChannel");
+        simpleEventSub = new SimpleEventSub(engine);
     }
 
     public void start() {
         jedis.subscribe(evDefSub, evDefChannel);
+        jedis.subscribe(simpleEventSub, simpleEventChannel);
     }
 
 }
