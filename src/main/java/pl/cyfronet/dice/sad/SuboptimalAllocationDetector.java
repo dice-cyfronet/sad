@@ -25,7 +25,6 @@ public class SuboptimalAllocationDetector {
     private final Configuration config;
     private JedisPool jedisPool;
     private UpdateListener complexEvListener;
-    private EventDefinitionsManager evDefMng;
     private JedisPubSub evDefSub;
     private SimpleEventSub simpleEventSub;
 
