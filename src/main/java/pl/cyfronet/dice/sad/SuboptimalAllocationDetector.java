@@ -19,13 +19,11 @@ public class SuboptimalAllocationDetector {
     private static final Logger log = LoggerFactory.getLogger(SuboptimalAllocationDetector.class);
 
     private UpdateListener complexEvListener;
-    private Engine engine;
     private EventDefinitionsManager evDefMng;
 
     public SuboptimalAllocationDetector() {
         try {
-            engine = new Engine();
-            evDefMng = new EventDefinitionsManager(engine);
+            evDefMng = new EventDefinitionsManager();
             complexEvListener = RedisComplexEventSink.getInstance();
         } catch (SADException e) {
             log.error(
@@ -38,7 +36,7 @@ public class SuboptimalAllocationDetector {
 
     public static void main(String[] args) throws InterruptedException, URISyntaxException {
         log.info("Starting Suboptimal Allocation Detector");
-        //new SuboptimalAllocationDetector().start();
+        new SuboptimalAllocationDetector().start();
     }
 
     private void start() {
@@ -47,7 +45,7 @@ public class SuboptimalAllocationDetector {
     }
 
     private static void testLoadEvent() throws InterruptedException, URISyntaxException, SADException {
-        Engine engine = new Engine();
+        Engine engine = Engine.getInstnace();
         Map<String, Object> eventDef = new HashMap<String, Object>();
         eventDef.put("vmUuid", String.class);
         eventDef.put("cpuLoad", float.class);

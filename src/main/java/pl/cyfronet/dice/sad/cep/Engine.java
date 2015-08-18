@@ -10,11 +10,24 @@ import java.util.Map;
 */
 public class Engine {
 
+    private static volatile Engine instance;
+
     private EPServiceProvider epService;
     private EPRuntime epRuntime;
     private Map<String, Subscription> subscriptions;
 
-    public Engine() {
+    public static Engine getInstnace() {
+        if (instance  == null) {
+            synchronized (EventDefinitionsSub.class) {
+                if (instance == null) {
+                    instance = new Engine();
+                }
+            }
+        }
+        return instance;
+    }
+
+    private Engine() {
         epService = EPServiceProviderManager.getDefaultProvider();
         epRuntime = epService.getEPRuntime();
         subscriptions = new HashMap<>();

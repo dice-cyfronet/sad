@@ -16,8 +16,8 @@ public class SimpleEventSub extends JedisPubSub {
 
     private Engine engine;
 
-    public SimpleEventSub(Engine engine) {
-        this.engine = engine;
+    public SimpleEventSub() {
+        this.engine = Engine.getInstnace();
     }
 
     @Override

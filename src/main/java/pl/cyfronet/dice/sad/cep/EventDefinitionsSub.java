@@ -33,19 +33,19 @@ public class EventDefinitionsSub extends JedisPubSub {
     private final JsonSchema schema;
     private final ObjectMapper mapper;
 
-    public static EventDefinitionsSub getInstance(Engine engine) throws SADException {
+    public static EventDefinitionsSub getInstance() throws SADException {
         if (instance  == null) {
             synchronized (EventDefinitionsSub.class) {
                 if (instance == null) {
-                    instance = new EventDefinitionsSub(engine);
+                    instance = new EventDefinitionsSub();
                 }
             }
         }
         return instance;
     }
 
-    private EventDefinitionsSub(Engine engine) throws SADException {
-        this.engine = engine;
+    private EventDefinitionsSub() throws SADException {
+        this.engine = Engine.getInstnace();
         try {
             msgSchema = JsonLoader.fromResource("/event_defs_schema.json");
             schema = factory.getJsonSchema(msgSchema);
