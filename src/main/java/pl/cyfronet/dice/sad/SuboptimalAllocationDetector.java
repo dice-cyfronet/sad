@@ -32,7 +32,6 @@ public class SuboptimalAllocationDetector {
         config = Configuration.fromPropertiesFile();
         evDefSub = EventDefinitionsSub.getInstance();
         simpleEventSub = new SimpleEventSub();
-        complexEvListener = RedisComplexEventSink.getInstance();
     }
 
     public static void main(String[] args) {
@@ -53,6 +52,7 @@ public class SuboptimalAllocationDetector {
         setupJedisPool();
         setupEvDefinitionsListener();
         setupSimpleEvListener();
+        setupComplexEvSink();
     }
 
     private void setupJedisPool() {
@@ -103,14 +103,19 @@ public class SuboptimalAllocationDetector {
         log.info("Subscribed for simple events");
     }
 
+    private void setupComplexEvSink() {
+        RedisComplexEventSink.createInstance(jedisPool);
+    }
+
     //========================================================================================
 
-    private static void testLoadEvent() throws InterruptedException, URISyntaxException, SADException {
+    private void testLoadEvent() throws InterruptedException, URISyntaxException, SADException {
         Engine engine = Engine.getInstnace();
         Map<String, Object> eventDef = new HashMap<String, Object>();
         eventDef.put("vmUuid", String.class);
         eventDef.put("cpuLoad", float.class);
         engine.addEventType("CpuLoad1", eventDef);
+        RedisComplexEventSink.createInstance(jedisPool);
         UpdateListener listener = RedisComplexEventSink.getInstance();
         String complexEvDef = "select avg(cpuLoad), vmUuid from CpuLoad1.win:time(5 sec)"
                             + " having avg(cpuLoad) > 0.8 output first every 10 seconds";
