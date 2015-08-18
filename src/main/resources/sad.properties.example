@@ -1,3 +1,6 @@
-redisURI = REDIS_URI
+redisHost = REDIS_HOST
+redisPort = REDIS_PORT
+redisPassword = REDIS_PASSWORD
+redisTimeout = 30000
 eventDefinitionChannel = CHANNEL_FOR_MESSAGES_DEFINING_EVENTS
 simpleEventChannel = CHANNEL_FOR_SIMPLE_EVENTS
