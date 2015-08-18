@@ -108,6 +108,7 @@ public class EventDefinitionsSub extends JedisPubSub {
 
     private void registerComplexEventListener(String eplStatementString) throws SADException {
         engine.subscribe(eplStatementString, RedisComplexEventSink.getInstance());
+        log.info(String.format("Registered for complex event %s", eplStatementString));
     }
 
     private void registerSimpleEvent(Map<String, Object> simpleEvDef) throws SADException {
@@ -128,6 +129,7 @@ public class EventDefinitionsSub extends JedisPubSub {
             }
         }
         engine.addEventType(simpleEventName, eventProps);
+        log.info(String.format("Registered simple event %s with properties: %s", simpleEventName, eventProps));
     }
 
     private Map<String, Object> decodeMsgToEventDefs(String msg) throws SADException {
