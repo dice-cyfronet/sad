@@ -1,5 +1,7 @@
 package pl.cyfronet.dice.sad;
 
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -31,4 +33,6 @@ public class Configurator {
     public String getProperty(String propName) {
         return props.getProperty(propName);
     }
+
+    public Properties getProperties() { return  props; }
 }
