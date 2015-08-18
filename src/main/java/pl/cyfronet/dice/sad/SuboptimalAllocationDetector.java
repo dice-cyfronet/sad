@@ -33,7 +33,6 @@ public class SuboptimalAllocationDetector {
         config = Configuration.fromPropertiesFile();
         evDefSub = EventDefinitionsSub.getInstance();
         simpleEventSub = new SimpleEventSub();
-        evDefMng = new EventDefinitionsManager();
         complexEvListener = RedisComplexEventSink.getInstance();
     }
 
